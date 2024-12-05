@@ -7,8 +7,9 @@ myKoa.use(async (ctx, next) => {
   try {
     await next();
   } catch (err: any) {
-    ctx.response.status = 500;
-    ctx.response.body = err.message;
+    ctx.status = 500;
+    ctx.type = "text/plain";
+    ctx.body = err.message;
   }
 });
 
@@ -31,11 +32,14 @@ myKoa.use(async (ctx, next) => {
 
 myKoa.use((ctx) => {
   console.log("sync use 3 befire");
-  ctx.response.type = "application/json"
-  ctx.response.body = [{
-    a:100,b:200
-  }];
-  //   JSON.parse("{sadasda}");
+  ctx.type = "application/json";
+  ctx.body = [
+    {
+      a: 100,
+      b: 200,
+    },
+  ];
+  // JSON.parse("{sadasda}");
   console.log("sync use 3 after");
 });
 
