@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES6",               // 输出的 JavaScript 版本
+    "module": "commonjs",          // 模块系统
+    "strict": true,                // 启用严格模式
+    "esModuleInterop": true,       // 使 CommonJS 和 ES 模块兼容
+    "skipLibCheck": true,          // 跳过库文件检查
+    "forceConsistentCasingInFileNames": true, // 强制文件名一致
+    "outDir": "./dist",            // 编译后的输出目录
+    "rootDir": "./src/lib",            // 源代码的根目录
+    "declaration": true,           // 生成类型声明文件 (.d.ts)
+    "types": ["node"],           // 指定使用 node 类型
+  },
+  "include": [
+    "src/lib/**/*"                 // 只编译 src/lib 目录下的所有 TypeScript 文件
+  ],
+  "exclude": [
+    "node_modules"                 // 排除 node_modules 目录
+  ]
+}
