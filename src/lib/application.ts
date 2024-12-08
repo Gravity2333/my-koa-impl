@@ -10,7 +10,7 @@ type Dispatch = () => Promise<void>;
 /**
  * middleware可以为同步/异步（返回Promise）
  */
-interface MiddleWare {
+export interface MiddleWare {
   (context: Context, dispatch: Dispatch): any;
 }
 
