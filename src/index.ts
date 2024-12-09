@@ -1,5 +1,4 @@
 import MyKoa from "./lib/application";
-import KoaRouter from "./lib/middlewares/koa-router/router";
 import userRouter from "./routers/users";
 import apiRouter from "./routers/api";
 import developerRouter from "./routers/developers";
@@ -26,6 +25,8 @@ myKoa.use((ctx,next) => {
     if(ctx.path === '' || ctx.path === '/'){
         ctx.status = 301
         ctx.res.setHeader('location','/web-static/index.html')
+    }else{
+       return next()
     }
 })
 
