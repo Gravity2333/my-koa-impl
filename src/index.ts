@@ -1,64 +1,34 @@
 import MyKoa from "./lib/application";
+import KoaRouter from "./lib/middlewares/koa-router/router";
 
 const myKoa = new MyKoa();
 
-myKoa.use(async (ctx, next) => {
-  // 错误处理
-  try {
-    await next();
-  } catch (err: any) {
-    ctx.status = 500;
-    ctx.type = "text/plain";
-    ctx.body = err.message;
-  }
+const router = new KoaRouter({
+  prefiex: "/user",
 });
 
-myKoa.use(async (ctx, next) => {
-  console.log("async use 1 befire");
-  await next();
-  console.log("async use 1 after");
-});
-
-myKoa.use(async (ctx, next) => {
-  console.log("async use 2 befire");
-  await new Promise((r) => {
-    setTimeout(() => {
-      r("async");
-    }, 1000);
-  });
-  await next();
-  console.log("async use 2 after");
-});
-
-myKoa.use((ctx) => {
-  console.log("sync use 3 befire");
-  ctx.type = "application/json";
-  ctx.body = [
-    {
-      a: 100,
-      b: 200,
-    },
-  ];
-  // JSON.parse("{sadasda}");
-  console.log("sync use 3 after");
-});
-
-// myKoa.use( (ctx, next) => {
-//   console.log("sync use 1 befire");
+// router.use((ctx, next) => {
+//   (ctx as any).commonMiddleware = "commonMiddleware run";
 //   next();
-//   console.log("sync use 1 after");
 // });
 
-// myKoa.use( (ctx, next) => {
-//   console.log("sync use 2 befire");
+// router.use("/api", (ctx, next) => {
+//   (ctx as any).commonMiddleware = "commonMiddleware run";
 //   next();
-//   console.log("sync use 2 after");
 // });
 
-// myKoa.use((ctx) => {
-//   console.log("sync use 3 befire");
-//   ctx.response.end("hello koa");
-//   console.log("sync use 3 after");
+// router.use(["/list", "/info"], (ctx, next) => {
+//   (ctx as any).getInfo = "getInfo run";
+//   next();
 // });
 
+router.get("/list", (ctx, next) => {
+  ctx.body = [{ a: 100 }];
+});
+
+// console.log(router.routes())
+// console.log(router);
+// myKoa.use(router.routes());
+
+myKoa.use(router.routes());
 myKoa.listen();

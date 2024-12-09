@@ -5,7 +5,7 @@ import request from "./request";
 import response from "./response";
 import { Stream } from "stream";
 
-type Dispatch = () => Promise<void>;
+export type Dispatch = () => Promise<void>;
 
 /**
  * middleware可以为同步/异步（返回Promise）

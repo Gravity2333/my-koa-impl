@@ -8,7 +8,7 @@
         "skipFiles": ["<node_internals>/**"],
         "program": "${workspaceFolder}/node_modules/.bin/ts-node",
         "args": [
-          "${workspaceFolder}/src/app.ts"  // 你的 TypeScript 文件路径
+          "${workspaceFolder}/src/index.ts"  // 你的 TypeScript 文件路径
         ]
       }
     ]
