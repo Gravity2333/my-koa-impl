@@ -1,9 +1,9 @@
 import type { Context } from "./context";
-type Dispatch = () => Promise<void>;
+export type Dispatch = () => Promise<void>;
 /**
  * middleware可以为同步/异步（返回Promise）
  */
-interface MiddleWare {
+export interface MiddleWare {
     (context: Context, dispatch: Dispatch): any;
 }
 export default class MyKoa {
@@ -42,4 +42,3 @@ export default class MyKoa {
      */
     compose(middlewares: MiddleWare[]): MiddleWare;
 }
-export {};

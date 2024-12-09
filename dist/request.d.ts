@@ -14,6 +14,8 @@ export type KoaRequest = {
     queryString: string;
     /** 查询query对象 */
     query: Record<string, any>;
+    /** params */
+    params: Record<string, any>;
 };
 /** 简单实现request代理 */
 declare const request: KoaRequest;

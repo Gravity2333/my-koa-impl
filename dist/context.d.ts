@@ -12,6 +12,8 @@ export type Context = {
     url: KoaRequest["url"];
     path: KoaRequest["path"];
     query: KoaRequest["query"];
+    /** 别名 代理request.params */
+    params: Record<string, any>;
     queryString: KoaRequest["queryString"];
     body: KoaResponse["body"];
     message: KoaResponse["message"];

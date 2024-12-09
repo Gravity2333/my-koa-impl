@@ -13,6 +13,7 @@ const context = {};
     .access("url")
     .access("path")
     .access("query")
+    .access("params")
     .access("queryString");
 /** 处理response代理 */
 (0, delegates_1.default)(context, "response")
