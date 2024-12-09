@@ -126,7 +126,7 @@ class Router implements IRouter {
 
       // 判断 是否最终匹配到了 即匹配了path和method
       if (!matched.route) return next();
-      
+
       // 匹配到了，组合所有匹配到的middleware
       const middlewareChain: MiddleWare[] = matched.pathAndMethod.reduce(
         (memo: MiddleWare[], layer) => {
@@ -176,17 +176,20 @@ class Router implements IRouter {
         // 嵌套路由，.router由routes函数挂到m上
         // 克隆m
         const clonedRouter = Object.assign(
-          Router.prototype,
+          Object.create(Router.prototype),
           (m as any).router,
           {
-            stack: [...(m as any).stack],
+            stack: [...(m as any).router.stack],
           }
         ) as IRouter;
 
         // 创建cloneLayer 并且加入到当前stack
         for (let i = 0; i < clonedRouter.stack.length; i++) {
           const currentLayer = clonedRouter.stack[i];
-          const clonedLayer = Object.assign(Layer.prototype, currentLayer);
+          const clonedLayer = Object.assign(
+            Object.create(Layer.prototype),
+            currentLayer
+          );
           /** 设置前缀 */
           if (path) {
             clonedLayer.setPrefix(path);
@@ -212,7 +215,7 @@ class Router implements IRouter {
 
   /** 返回composed middleware */
   public routes() {
-    console.log(22)
+    console.log(22);
     return this.middleware();
   }
 }

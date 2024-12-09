@@ -2,6 +2,10 @@ import { MiddleWare } from "../../application";
 import { pathToRegexp } from "path-to-regexp";
 import type { Keys } from "path-to-regexp";
 
+export interface ILayerOptions {
+  end?: boolean;
+}
+
 /** Layer对象用来保存路由对象 */
 export interface ILayer {
   /** 记录methods */
@@ -15,9 +19,7 @@ export interface ILayer {
   /** 记录中间件 */
   stack: MiddleWare[];
   /** opts */
-  options: {
-    end?: true;
-  };
+  options: ILayerOptions;
 }
 
 /** 每个path对应一个layer */
@@ -27,9 +29,7 @@ class Layer implements ILayer {
   path: string;
   regexp: RegExp;
   stack: MiddleWare[];
-  options: {
-    end?: true;
-  } = {};
+  options: ILayerOptions = {};
   constructor(path: string, methods: string[], middlewares: any) {
     /** 设置方法 */
     this.methods = methods;
@@ -66,8 +66,9 @@ class Layer implements ILayer {
       if (this.options?.end !== void 0) {
         return this.options?.end;
       }
-      const prevPath = this.path;
-      return !!prevPath;
+      const checkEnd = !!this.path;
+      this.options.end = checkEnd;
+      return checkEnd;
     })();
 
     this.path = `${prefix}${this.path}`;
@@ -79,7 +80,6 @@ class Layer implements ILayer {
     /** 重新设置paramNames */
     this.paramNames = keys;
   }
-  
 }
 
 export default Layer;
