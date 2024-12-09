@@ -30,7 +30,6 @@ stuRouter.get("/list", (ctx, next) => {
   ctx.body = data.filter((f) => f.type === "student");
 });
 
-
 const teacherRouter = new KoaRouter({
   prefiex: "/teacher",
 });
@@ -43,22 +42,25 @@ teacherRouter.get("/list", (ctx, next) => {
 teacherRouter.get("/:id/info", (ctx, next) => {
   ctx.type = "application/json";
   ctx.body = {
-    name: 'TEST TEACHER',
+    name: "TEST TEACHER",
     id: ctx.params.id,
-    desc:' WIODJWDOPWJOPWD',
-  }
+    desc: " WIODJWDOPWJOPWD",
+  };
 });
-
 
 const myKoa = new MyKoa();
 
-myKoa.use((ctx,next) => {
-  console.log(ctx.queryString,ctx.query)
-  next()
-})
+myKoa.use((ctx, next) => {
+  console.log(ctx.queryString, ctx.query);
+  next();
+});
 
-const userRouter = new KoaRouter({
-  prefiex: "/user",
+const userRouter = new KoaRouter({});
+// 设置前缀
+userRouter.prefix("/user/");
+userRouter.param("id", (id, ctx, next) => {
+  console.log(id);
+  next();
 });
 
 userRouter.get("/list", (ctx, next) => {
@@ -67,9 +69,8 @@ userRouter.get("/list", (ctx, next) => {
 });
 
 userRouter.use(stuRouter.routes());
-userRouter.use(teacherRouter.routes())
+userRouter.use(teacherRouter.routes());
 
-userRouter.prefix('/api/')
 // console.log(router.routes())
 console.log(userRouter);
 // myKoa.use(router.routes());

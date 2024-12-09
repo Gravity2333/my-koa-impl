@@ -15,9 +15,14 @@ interface IRouterOptions {
   methods?: Methods[];
 }
 
+/** param中间件函数类型 */
+export interface ParamMiddleware {
+  (id: string, context: Context, dispatch: Dispatch): any;
+}
+
 interface IRouter {
   /** params处理中间件记录对象 */
-  params: Record<string, MiddleWare>;
+  params: Record<string, ParamMiddleware>;
   /** stack Layer对象stack */
   stack: ILayer[];
   /** opts: oprtions */
@@ -35,6 +40,9 @@ interface IRouter {
 
   /** 给一个已经实例化好的路由修改prefix */
   prefix: (p: string) => IRouter;
+
+  /** 给router设置params处理中间件 */
+  param(paramName: string, paramMiddleware: ParamMiddleware): void;
 }
 
 interface Match {
@@ -54,7 +62,7 @@ interface Match {
 /** Router对象 */
 // @ts-ignore
 class Router implements IRouter {
-  params: Record<string, MiddleWare> = {};
+  params: Record<string, ParamMiddleware> = {};
   stack: ILayer[] = [];
   opts: IRouterOptions = {};
   methods: Methods[] = [];
@@ -79,6 +87,12 @@ class Router implements IRouter {
     if (this.opts.prefiex) {
       layer.setPrefix(this.opts.prefiex);
     }
+    // 设置params处理中间件
+    Object.keys(this.params).forEach((paramName) => {
+      const paramsMiddleware = this.params[paramName];
+      layer.param(paramName, paramsMiddleware);
+    });
+
     // 入stack
     this.stack.push(layer);
     // 返回this
@@ -133,12 +147,12 @@ class Router implements IRouter {
       // 匹配到了，组合所有匹配到的middleware
       const middlewareChain: MiddleWare[] = matched.pathAndMethod.reduce(
         (memo: MiddleWare[], layer) => {
-            /** 创建一个中间件用来处理当前layer的信息 */
-          const _middleWare = (ctx: Context,next: Dispatch) => {
+          /** 创建一个中间件用来处理当前layer的信息 */
+          const _middleWare = (ctx: Context, next: Dispatch) => {
             // 设置params
-            ctx.request.params = layer.params(ctx.path,ctx.request.params)
+            ctx.request.params = layer.params(ctx.path, ctx.request.params);
 
-            next()
+            next();
           };
           return [...memo, _middleWare, ...layer.stack];
         },
@@ -208,12 +222,19 @@ class Router implements IRouter {
           if (this.opts.prefiex) {
             clonedLayer.setPrefix(this.opts.prefiex);
           }
-
           /** cloneKLayer入stack */
           this.stack.push(clonedLayer);
           // 替换ClonedRouter中的Layer
           clonedRouter.stack[i] = clonedLayer;
         }
+
+        // 为clonedRouter设置中间件
+        // 设置params处理中间件
+        Object.keys(this.params).forEach((paramName) => {
+          const paramsMiddleware = this.params[paramName];
+          clonedRouter.param(paramName, paramsMiddleware);
+        });
+        
       } else {
         /** 非嵌套情况 */
         this.register(path, [], [m]);
@@ -248,6 +269,25 @@ class Router implements IRouter {
       layer.setPrefix(_prefix);
     });
     return this;
+  }
+
+  /** param中间件函数
+   * @example
+   *
+   * router.param('id',(id,ctx,next)=>{
+   *   if(users[id]){
+   *     return next()
+   *   }
+   *   ctx.throw(401)
+   * })
+   */
+  param(paramName: string, paramMiddleware: ParamMiddleware) {
+    /** 记录一下param处理中间件 */
+    this.params[paramName] = paramMiddleware;
+
+    this.stack.forEach((layer) => {
+      layer.param(paramName, paramMiddleware);
+    });
   }
 }
 

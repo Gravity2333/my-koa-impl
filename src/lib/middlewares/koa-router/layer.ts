@@ -1,6 +1,8 @@
-import { MiddleWare } from "../../application";
+import { Dispatch, MiddleWare } from "../../application";
 import { pathToRegexp } from "path-to-regexp";
 import type { Keys } from "path-to-regexp";
+import { ParamMiddleware } from "./router";
+import { Context } from "../../context";
 
 export interface ILayerOptions {
   end?: boolean;
@@ -23,7 +25,13 @@ export interface ILayer {
   /** 增加prefix */
   setPrefix(prefix: string): void;
   /** 获取params */
-  params: (path: string,lastParams: Record<string, any>) => Record<string, any>
+  params: (
+    path: string,
+    lastParams: Record<string, any>
+  ) => Record<string, any>;
+
+  /** 注册param中间件 */
+  param: (paramName: string, paramMiddleware: ParamMiddleware) => ILayer;
 }
 
 /** 每个path对应一个layer */
@@ -73,6 +81,45 @@ class Layer implements ILayer {
       ...lastParams,
       ...currentParams,
     };
+  }
+
+  /** param中间件函数
+   * @example
+   *
+   * layer.param('id',(id,ctx,next)=>{
+   *   if(users[id]){
+   *     return next()
+   *   }
+   *   ctx.throw(401)
+   * })
+   */
+  param(paramName: string, paramMiddleware: ParamMiddleware) {
+    const handleMiddleware = (ctx: Context, next: Dispatch) => {
+      // 注意 params处理中间件是加到layer.stack前面的，此时ctx.params已经有params内容了
+      paramMiddleware(ctx.params[paramName], ctx, next);
+    };
+
+    // 在handleMiddleware上挂上paramName，方便寻找插入位置
+    handleMiddleware.paramName = paramName;
+
+    // 插入的逻辑是，从stack头开始找，如果某个中间件没有paramName 则表示这个中间件不是params处理中间件，则直接插入到前面
+    // 如果有id，代表是paran处理中间件 则按照其paramName在this.paramNames的顺序查找
+    const paramNames = this.paramNames.map((p) => p.name);
+
+    const x = paramNames.indexOf(paramName);
+
+    // paramName 在 paramNames内 才插入
+    if (x >= 0) {
+      this.stack.some((fn: any, index: number) => {
+        if (!fn.paramName || paramNames.indexOf(fn.paramName) > x) {
+          /** 插入到index */
+          this.stack.splice(index, 0, handleMiddleware);
+          return true;
+        }
+      });
+    }
+
+    return this;
   }
 
   /** 设置prefix
