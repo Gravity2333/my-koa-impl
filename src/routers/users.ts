@@ -9,4 +9,10 @@ userRouter.get("/list", (ctx, next) => {
   ctx.body = userList;
 });
 
+userRouter.get("/:id/info", (ctx, next) => {
+  const { id } = ctx.params;
+  ctx.type = "application/json";
+  ctx.body = userList.find((d) => d.id == id) || [];
+});
+
 export default userRouter;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <link rel="stylesheet" href="users.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>User List</h1>
+        <a style="position: fixed; right: 20px;top: 10px;;" href="/web-static/index.html">Home</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Address</th>
+                    <th>Gender</th>
+                    <th>Profession</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+        <script>
+            const tBody = document.querySelector('#tbody');
+            (async () => {
+                // 获取server数据
+                // 由于静态资源和服务接口在一个server 不存在跨域问题
+                const result = await fetch('http://127.0.0.1:8888/api/user/list').then(res => {
+                    return res.json()
+                })
+
+                tBody.innerHTML = result.reduce((currentElem, userInfo) => {
+                    return currentElem + `
+                            <tr>
+                                <td style="color:skyblue;cursor:pointer" class="id">${userInfo.id}</td>
+                                <td>${userInfo.name}</td>
+                                <td>${userInfo.age}</td>
+                                <td>${userInfo.address}</td>
+                                <td>${userInfo.gender}</td>
+                                <td>${userInfo.profession}</td>
+                            </tr>
+                        `
+                }, '')
+            })()
+            tBody.addEventListener('click', async e => {
+                if (e.target.className === 'id') {
+                    const id = e.target.innerText
+                    const userInfo = await fetch(`http://127.0.0.1:8888/api/user/${id}/info`).then(res => res.json())
+                    alert(JSON.stringify(userInfo));
+                }
+            })
+        </script>
+    </div>
+</body>
+
+</html>

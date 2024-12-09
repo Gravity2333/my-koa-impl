@@ -1,11 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Koa</title>
+    <title>Welcome to My-Koa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <h2>Hello Koa</h2>
+    <div class="container">
+        <header>
+            <h1>Welcome to <span>My-Koa</span></h1>
+            <p>A simple and powerful Koa framework </p>
+            <p>A simple user Demo shows <a href="./users.html">here!</a> </p>
+        </header>
+
+        <section class="content">
+            <h2>Quick Start:</h2>
+            <p>Here is an example of how to use <strong>My-Koa</strong>:</p>
+
+            <div class="code-container">
+                <pre><code class="language-javascript">
+import Koa from 'koa';
+import Router from 'koa-router';
+
+const app = new Koa();
+const router = new Router();
+
+// Define routes
+router.get('/', ctx => {
+  ctx.body = 'Hello, My-Koa!';
+});
+
+app.use(router.routes())
+   .use(router.allowedMethods());
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+                </code></pre>
+            </div>
+        </section>
+
+        <footer>
+            <p>Enjoy building with <strong>My-Koa</strong>!</p>
+        </footer>
+    </div>
+
+    <!-- Optionally, include a syntax highlighter library like Prism -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
 </body>
+
 </html>

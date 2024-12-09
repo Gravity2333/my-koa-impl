@@ -72,8 +72,10 @@ const response = {
       this.status = 204;
       this.message = "";
     } else {
-      this.status = 200;
-      this.message = "";
+      if (this.status < 500 && this.status >= 400) {
+        this.status = 200;
+        this.message = "";
+      }
     }
 
     (this as any)._body = val;
