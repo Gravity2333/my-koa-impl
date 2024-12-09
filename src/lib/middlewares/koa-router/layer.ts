@@ -20,6 +20,8 @@ export interface ILayer {
   stack: MiddleWare[];
   /** opts */
   options: ILayerOptions;
+  /** 增加prefix */
+  setPrefix(prefix: string): void
 }
 
 /** 每个path对应一个layer */

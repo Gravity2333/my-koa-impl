@@ -32,6 +32,9 @@ interface IRouter {
 
   /** routes方法 */
   routes: () => MiddleWare;
+
+  /** 给一个已经实例化好的路由修改prefix */
+  prefix: (p: string) => IRouter;
 }
 
 interface Match {
@@ -217,6 +220,27 @@ class Router implements IRouter {
   public routes() {
     console.log(22);
     return this.middleware();
+  }
+
+  /** 给已经实例好的路由对象设置prefix
+   * @example
+   *
+   * ```javascript
+   * router.prefix('/things/:thing_id')
+   * ```
+   * @param {String} prefix
+   * @returns {Router}
+   */
+  prefix(_prefix: string) {
+    /** 去掉prefix结尾的 “/” */
+    _prefix = _prefix.replace(/\/$/, "");
+    /** 设置新的prefix */
+    this.opts.prefiex = _prefix;
+    /** 更新所有的prefix */
+    this.stack.forEach((layer) => {
+      layer.setPrefix(_prefix);
+    });
+    return this;
   }
 }
 

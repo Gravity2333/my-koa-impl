@@ -55,6 +55,7 @@ userRouter.get("/list", (ctx, next) => {
 userRouter.use(stuRouter.routes());
 userRouter.use(teacherRouter.routes())
 
+userRouter.prefix('/api/')
 // console.log(router.routes())
 console.log(userRouter);
 // myKoa.use(router.routes());
