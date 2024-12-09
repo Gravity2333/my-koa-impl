@@ -21,7 +21,9 @@ export interface ILayer {
   /** opts */
   options: ILayerOptions;
   /** 增加prefix */
-  setPrefix(prefix: string): void
+  setPrefix(prefix: string): void;
+  /** 获取params */
+  params: (path: string,lastParams: Record<string, any>) => Record<string, any>
 }
 
 /** 每个path对应一个layer */
@@ -57,6 +59,20 @@ class Layer implements ILayer {
     this.regexp = regexp;
     /** 设置paramNames */
     this.paramNames = keys;
+  }
+
+  /** 获得一个params对象 */
+  params(path: string, lastParams: Record<string, any> = {}) {
+    const currentParams: Record<string, any> = {};
+    /** 捕获到的参数 */
+    const captures = path.match(this.regexp)?.slice(1) || [];
+    this.paramNames.forEach(({ name }, index) => {
+      currentParams[name] = captures[index];
+    });
+    return {
+      ...lastParams,
+      ...currentParams,
+    };
   }
 
   /** 设置prefix

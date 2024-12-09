@@ -27,6 +27,8 @@ export type Context = {
   path: KoaRequest["path"];
   // 别名 代理request.query
   query: KoaRequest["query"];
+  /** 别名 代理request.params */
+  params: Record<string, any>;
   // 别名 代理request.queryString
   queryString: KoaRequest["queryString"];
 
@@ -50,6 +52,7 @@ delegates(context, "request")
   .access("url")
   .access("path")
   .access("query")
+  .access("params")
   .access("queryString");
 
 /** 处理response代理 */

@@ -133,7 +133,14 @@ class Router implements IRouter {
       // 匹配到了，组合所有匹配到的middleware
       const middlewareChain: MiddleWare[] = matched.pathAndMethod.reduce(
         (memo: MiddleWare[], layer) => {
-          return [...memo, ...layer.stack];
+            /** 创建一个中间件用来处理当前layer的信息 */
+          const _middleWare = (ctx: Context,next: Dispatch) => {
+            // 设置params
+            ctx.request.params = layer.params(ctx.path,ctx.request.params)
+
+            next()
+          };
+          return [...memo, _middleWare, ...layer.stack];
         },
         []
       );

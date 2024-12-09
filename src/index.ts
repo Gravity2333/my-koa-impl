@@ -40,8 +40,22 @@ teacherRouter.get("/list", (ctx, next) => {
   ctx.body = data.filter((f) => f.type === "teacher");
 });
 
+teacherRouter.get("/:id/info", (ctx, next) => {
+  ctx.type = "application/json";
+  ctx.body = {
+    name: 'TEST TEACHER',
+    id: ctx.params.id,
+    desc:' WIODJWDOPWJOPWD',
+  }
+});
+
 
 const myKoa = new MyKoa();
+
+myKoa.use((ctx,next) => {
+  console.log(ctx.queryString,ctx.query)
+  next()
+})
 
 const userRouter = new KoaRouter({
   prefiex: "/user",
